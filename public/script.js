@@ -5,7 +5,7 @@ const userIntervals = {};
 function addUser(username) {
   const li = document.createElement('li');
   li.className = 'list-group-item d-flex justify-content-between align-items-center';
-  li.innerHTML = `<span class="username text-primary">${username}</span><span class="status">...</span>`;
+  li.innerHTML = `<span class="username text-primary">${username}</span><span class="status">تحليل...</span>`;
   analysisList.appendChild(li);
 
   li.querySelector('.username').addEventListener('click', () => showRecordings(username));
@@ -23,7 +23,11 @@ async function checkStatus(username, li) {
       clearInterval(userIntervals[username]);
       const recRes = await fetch(`/api/recordings/${username}`);
       const recData = await recRes.json();
-      li.querySelector('.status').innerHTML = `<span class="badge bg-secondary">${recData.recordings.length}</span>`;
+      if (recData.recordings.length > 0) {
+        li.querySelector('.status').innerHTML = `<i class="bi bi-download text-success"></i> <span class="badge bg-secondary">${recData.recordings.length}</span>`;
+      } else {
+        li.querySelector('.status').innerHTML = '<span class="text-muted">غير متصل</span>';
+      }
     }
   } catch (e) {
     li.querySelector('.status').textContent = 'خطأ';
